@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>
+body, div, p, td {font-family:verdana; font-size:12px;}
+body{margin:20px;}
+div {border:1px solid #666; line-height:150%; padding:20px; }
+li {padding:5px 0;}
+</style>
+</head>
+<body>
+{% if not page %}
+<p>Sorry!  That page was not found (404).</p>
+{% endif %}
+
+{% if page %}
+<h2>Node: {{ page.title }}</h2>
+
+<div><ul>
+    <li><b>id:</b> {{ page.id }}</li>
+    <li><b>title:</b> {{ page.title }}</li>
+    <li><b>menu name:</b> {{ page.name }}</li>
+    <li><b>author:</b> {{ page.author }}</li>
+    <li><b>content:</b> {{ page.content|safe|linebreaks }}</li>
+    <li><b>teaser:</b> {{ page.teaser }}</li>
+    <li><b>template:</b> {{ page.template }}</li>
+    <li><b>start_publish_date:</b> {{ page.start_publish_date }}</li>
+    <li><b>end_publish_date:</b> {{ page.end_publish_date }}</li>
+    <li><b>created:</b> {{ page.created }}</li>
+    <li><b>modified:</b> {{ page.modified }}</li>
+    <li><b>is root:</b> {{ page.is_root }}</li>
+    <li><b>breadcrumb:</b> {{ page.breadcrumb }}</li>
+    <li><b>breadcrumb no leaf:</b> {{ page.breadcrumb_without_leaf }}</li>
+    <li><b>template</b>: {{ page.template }}</li>
+
+</ul>    
+</div>
+<br />
+<div>
+    {# need to work out the get_absolute_url thing #}
+    <ul>
+    {% for n in nodes %}
+    
+        {% ifequal n.id page.id %}
+            <li>({{ forloop.counter }}) <b> {{ n.name }}</b> {{ n.id }} {{ n.left_val }}
+                <br /><a href="{{ n.get_absolute_url }}">{{ n.name }}</a></b></li>
+        {% else %}
+            <li>({{ forloop.counter }}) <b> {{ n.name }}</b> {{ n.id }} {{ n.left_val }}
+                <br /><a href="{{ n.get_absolute_url }}">{{ n.name }}</a></b>
+                <br />{{ n.breadcrumb }}
+                <br />{#{ n.parent_string_for_admin }#}
+                </li>
+        {% endifequal %}
+    {% endfor %}
+    </ul>    
+    
+</div>
+
+
+
+
+{% endif %}
+{% include "sql_query_debug.html" %}
+
+
+	
+</body>
+</html>

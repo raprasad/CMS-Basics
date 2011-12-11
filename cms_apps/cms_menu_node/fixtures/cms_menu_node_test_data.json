@@ -1,0 +1,354 @@
+[
+    {
+        "pk": 1, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 1, 
+            "name": "food", 
+            "parent": null, 
+            "sibling_order": 1, 
+            "is_root": true, 
+            "visible": true, 
+            "right_val": 44, 
+            "left_val": 1, 
+            "subclass_name":"",
+			"slug": "food"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 2, 
+            "name": "fruit", 
+            "parent": 1, 
+            "sibling_order": 2, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 21, 
+            "left_val": 2, 
+            "subclass_name":"",
+			"slug": "fruit"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 3, 
+            "name": "red", 
+            "parent": 2, 
+            "sibling_order": 3, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 6, 
+            "left_val": 3, 
+            "subclass_name":"",
+			"slug": "red"
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 4, 
+            "name": "cherry", 
+            "parent": 3, 
+            "sibling_order": 4, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 5, 
+            "left_val": 4, 
+            "subclass_name":"",
+			"slug": "cherry"
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 3, 
+            "name": "yellow", 
+            "parent": 2, 
+            "sibling_order": 7, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 10, 
+            "left_val": 7, 
+            "subclass_name":"",
+			"slug": "yellow"
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 4, 
+            "name": "banana", 
+            "parent": 5, 
+            "sibling_order": 8, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 9, 
+            "left_val": 8, 
+            "subclass_name":"",
+			"slug": "banana"
+        }
+    }, 
+    {
+        "pk": 18, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 3, 
+            "name": "tropical", 
+            "parent": 2, 
+            "sibling_order": 11, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 16, 
+            "left_val": 11, 
+            "subclass_name":"",
+			"slug": "tropical"
+        }
+    }, 
+    {
+        "pk": 19, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 4, 
+            "name": "papaya", 
+            "parent": 18, 
+            "sibling_order": 12, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 13, 
+            "left_val": 12, 
+            "subclass_name":"",
+			"slug": "papaya"
+        }
+    }, 
+    {
+        "pk": 20, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 4, 
+            "name": "pineapple", 
+            "parent": 18, 
+            "sibling_order": 14, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 15, 
+            "left_val": 14, 
+            "subclass_name":"",
+			"slug": "pineapple"
+        }
+    }, 
+    {
+        "pk": 21, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 3, 
+            "name": "local", 
+            "parent": 2, 
+            "sibling_order": 17, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 20, 
+            "left_val": 17, 
+            "subclass_name":"",
+			"slug": "local"
+        }
+    }, 
+    {
+        "pk": 22, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 4, 
+            "name": "apple", 
+            "parent": 21, 
+            "sibling_order": 18, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 19, 
+            "left_val": 18, 
+            "subclass_name":"",
+			"slug": "apple"
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 2, 
+            "name": "meat", 
+            "parent": 1, 
+            "sibling_order": 22, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 27, 
+            "left_val": 22, 
+            "subclass_name":"",
+			"slug": "meat"
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 3, 
+            "name": "beef", 
+            "parent": 7, 
+            "sibling_order": 23, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 24, 
+            "left_val": 23, 
+            "subclass_name":"",
+			"slug": "beef"
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 3, 
+            "name": "pork", 
+            "parent": 7, 
+            "sibling_order": 25, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 26, 
+            "left_val": 25, 
+            "subclass_name":"",
+			"slug": "pork"
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 2, 
+            "name": "vegetable", 
+            "parent": 1, 
+            "sibling_order": 28, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 43, 
+            "left_val": 28, 
+            "subclass_name":"",
+			"slug": "vegetable"
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 3, 
+            "name": "root", 
+            "parent": 10, 
+            "sibling_order": 29, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 36, 
+            "left_val": 29, 
+            "subclass_name":"",
+			"slug": "root"
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 4, 
+            "name": "potato", 
+            "parent": 11, 
+            "sibling_order": 30, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 31, 
+            "left_val": 30, 
+            "subclass_name":"",
+			"slug": "potato"
+        }
+    }, 
+    {
+        "pk": 13, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 4, 
+            "name": "yam", 
+            "parent": 11, 
+            "sibling_order": 32, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 33, 
+            "left_val": 32, 
+            "subclass_name":"",
+			"slug": "yam"
+        }
+    }, 
+    {
+        "pk": 14, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 4, 
+            "name": "yucca", 
+            "parent": 11, 
+            "sibling_order": 34, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 35, 
+            "left_val": 34, 
+            "subclass_name":"",
+			"slug": "yucca"
+        }
+    }, 
+    {
+        "pk": 15, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 3, 
+            "name": "nightshade", 
+            "parent": 10, 
+            "sibling_order": 37, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 42, 
+            "left_val": 37, 
+            "subclass_name":"",
+			"slug": "nightshade"
+        }
+    }, 
+    {
+        "pk": 16, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 4, 
+            "name": "tomato", 
+            "parent": 15, 
+            "sibling_order": 38, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 39, 
+            "left_val": 38, 
+            "subclass_name":"",
+			"slug": "tomato"
+        }
+    }, 
+    {
+        "pk": 17, 
+        "model": "cms_menu_node.node", 
+        "fields": {
+            "menu_level": 4, 
+            "name": "eggplant", 
+            "parent": 15, 
+            "sibling_order": 40, 
+            "is_root": false, 
+            "visible": true, 
+            "right_val": 41, 
+            "left_val": 40, 
+            "subclass_name":"",
+			"slug": "eggplant"
+        }
+    }
+]
