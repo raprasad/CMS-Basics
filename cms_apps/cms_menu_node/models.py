@@ -2,7 +2,7 @@ from django.db import models
 from django.template.defaultfilters import slugify
 
 from cms_common.msg_util import *
-from cms_menu_node.exceptions import ParentRelationshipCircular
+from cms_menu_node.exceptions import ParentRelationshipCircular, RootNodeAlreadyExists
 
 
 BREADCRUMB_SEPARATOR = '->'
@@ -164,13 +164,22 @@ class Node(models.Model):
 
         """
         if Node.is_parent_relationship_circular(self, self.parent):
+            # this is handled in the cms_menu_node.forms
+            # will throw Exception if actually reached here via cmd line or something
             raise ParentRelationshipCircular(self)
-                
+        
+        if Node.does_root_node_already_exist(self) and self.parent is None:
+            # this is handled in the cms_menu_node.forms
+            # will throw Exception if actually reached here via cmd line or something
+            raise RootNodeAlreadyExists(self)
+            
         # this node being assigned as a root
-        if self.parent is None:
+        if self.parent is None:        
             self.is_root = True
         else:
             self.is_root = False   
+
+
 
         self.slug = slugify(self.name)
         
@@ -193,6 +202,20 @@ class Node(models.Model):
         else:
             return choices
 
+    @staticmethod
+    def does_root_node_already_exist(instance):
+        # before saving, check if this may potentially override an existing room        
+        if instance.id:
+            print 'id: %s' % instance.id
+            if Node.objects.filter(is_root=True).exclude(id=instance.id).count() > 0:
+                return True
+        elif Node.objects.filter(is_root=True).count() > 0:
+            print 'no instance id'
+            return True
+            
+        return False
+                
+        
     @staticmethod
     def is_parent_relationship_circular(instance, new_parent):
         """
@@ -235,16 +258,4 @@ class Node(models.Model):
 
 from cms_menu_node.tree_builder import connect_node_signals, disconnect_node_signals, rebuild_tree_after_node_saved
 
-#connect_node_signals()  # connect signals to rebuild tree and ensure one, and only one, root node
-#check_for_single_root, rebuild_tree_after_node_saved
-
-# ------------------------------------------
-# pre save: make sure there is one, and only one, root
-# ------------------------------------------
-#pre_save.connect(check_for_single_root, sender=Node)
-
-# ------------------------------------------
-# post save: rebuild the tree
-# ------------------------------------------
-#post_save.connect(rebuild_tree_after_node_saved, sender=Node)
-
+connect_node_signals(Node)  # connect signals to rebuild tree and ensure one root 

@@ -23,11 +23,15 @@ class NodeAdminForm(forms.ModelForm):
         
         if new_parent and self.instance:
             if self.instance.id == new_parent.id:
-                raise forms.ValidationError("The Parent relationship is circular!  Please choose another parent!  (Or no parent for a root node)")
+                raise forms.ValidationError("The Parent relationship is circular!  Please choose another parent!")
             
 
         if Node.is_parent_relationship_circular(self.instance, new_parent=new_parent):
             raise forms.ValidationError("The Parent relationship is circular!  Please choose another parent!  (Or no parent for a root node)")
+        
+        if Node.does_root_node_already_exist(self.instance) and not new_parent:
+            raise forms.ValidationError("Please choose a parent.  (A home/root node already exists.)")
+            
         
         return new_parent
         

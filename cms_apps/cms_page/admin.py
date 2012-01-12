@@ -1,27 +1,15 @@
 from django.contrib import admin
 
 from cms_page.models import Page, PageDirectLink, PageCustomView, PageImage, PageDocument
+
 from cms_page.forms import PageAdminForm, PageDirectLinkAdminForm, PageCustomViewAdminForm
-from cms_menu_node.admin import NodeAdminBase
+
+from cms_menu_node.admin_base import NodeAdminBase
+
+from cms_page.admin_base import PageImageInline, PageDocumentInline
 """
 Have base class/subclass for ModelAdmin?  B/c node info is repeated over and over?
 """
-   
- 
-
-class PageImageInline(admin.TabularInline):
-    model = PageImage
-    #form = CageDataForm
-    readonly_fields= ['entry_time', 'web_url', ]
-    fields = ['nickname', 'image_file', 'web_url',]
-    extra=0
- 
-class PageDocumentInline(admin.TabularInline):
-    model = PageDocument
-    #form = CageDataForm
-    readonly_fields= ['entry_time', 'doc_path', ]
-    fields = ['nickname', 'doc_file', 'doc_path',]
-    extra=0
 
  
 class PageAdmin(NodeAdminBase):

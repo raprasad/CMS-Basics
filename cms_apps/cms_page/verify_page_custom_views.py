@@ -39,9 +39,12 @@ def get_list_of_all_urls(remove_admin_urls=True, as_choices=False):
     global URL_NAMES
     
     URL_NAMES = []  # reset global variable
-    root_urlconf = __import__(settings.ROOT_URLCONF)
-    url_names = load_url_pattern_names(root_urlconf.urls.urlpatterns)
-
+    root_urlconf = __import__(settings.ROOT_URLCONF) 
+    url_fname = str(settings.ROOT_URLCONF).split('.')[-1]   # e.g. 'urls_laptop' from 'btvc.urls_laptop'
+    url_pattern_name_to_eval = eval('root_urlconf.%s.urlpatterns' % url_fname)
+    url_names = load_url_pattern_names(url_pattern_name_to_eval)
+    
+    #url_names = load_url_pattern_names(root_urlconf.urls.urlpatterns)
     if remove_admin_urls:
         url_names = filter(lambda x: not does_url_name_have_admin_like_ending(x), url_names)
         
@@ -54,6 +57,8 @@ def get_list_of_all_urls(remove_admin_urls=True, as_choices=False):
 
 
 def verify_all_page_custom_views():
+    return True
+
     all_urls = get_list_of_all_urls()
     not_found = []
     for cv in PageCustomView.objects.all():

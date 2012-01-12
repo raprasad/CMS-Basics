@@ -1,12 +1,12 @@
 from cms_common.msg_util import *
 from cms_page.models import Page
-from cms_page_revision.models import PageRevision
 from django.db.models.signals import pre_save
 
 def make_revision(page_obj):
     if page_obj is None:
         return False
 
+    from cms_page_revision.models import PageRevision
         
     revision = PageRevision(page=page_obj\
                 ,name=page_obj.name\
@@ -23,6 +23,7 @@ def check_for_new_revision(sender=None, **kwargs):
     """Check the page being saved, if it's a revision--create a PageRevision before saving"""
     # sender is a Page object
     #msgt('check_for_new_revision')
+    from cms_page_revision.models import PageRevision
     
     page_to_save = kwargs.get('instance', None)
     if page_to_save is None:
@@ -74,13 +75,12 @@ def handle_revision_restore(page_revision_obj):
 
     return (True, page_to_revise.id )
     
+    
 def connect_revision_signal():
     pre_save.connect(check_for_new_revision, sender=Page)    
 
 def disconnect_revision_signal():
     pre_save.disconnect(check_for_new_revision, sender=Page)    
-
-
 
 
 

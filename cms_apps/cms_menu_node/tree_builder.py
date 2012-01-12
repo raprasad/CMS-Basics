@@ -222,7 +222,7 @@ def get_to_node_class(sender):
     
     if NODE_CLASS is None:
         # log a critical err
-        return None
+        msgx('FAIL:  NODE_CLASS is None')
 
 def disconnect_node_signals(node_obj_class):
     node_obj_class = get_to_node_class(node_obj_class)  # in case sender is a child of Node

@@ -1,9 +1,9 @@
 from django.contrib import admin
-
 from cms_page.models import Page
-from cms_page.admin import PageImageInline, PageDocumentInline
+from cms_page.admin_base import PageImageInline, PageDocumentInline
 from cms_page.forms import PageAdminForm
 from cms_page_revision.models import PageRevision
+
 
 # unregister Page from the version in cms_page/admin.py
 admin.site.unregister(Page)

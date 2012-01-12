@@ -37,6 +37,9 @@ Each time a Page is modified, a revision is created."""
 
     def restore_version(self):
         #return reverse('view_restore_revision', kwargs={'revision_id':self.id})
+        if not self.id:
+            return ''
+            
         restore_link = reverse('view_restore_revision', kwargs={'revision_id':self.id})
         return '<a href="%s">restore version</a>' % restore_link
     restore_version.allow_tags = True
