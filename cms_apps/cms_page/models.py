@@ -11,7 +11,7 @@ from cms_common.msg_util import *
 from cms_menu_node.models import Node
 from cms_menu_node.tree_builder import rebuild_tree_after_node_saved
 
-from ckeditor.fields import RichTextField
+#from ckeditor.fields import RichTextField
 from django.contrib.sites.models import Site
 
 
@@ -158,9 +158,9 @@ class PageImage(models.Model):
         ordering = ('nickname', 'entry_time')
 
 
-post_save.connect(rebuild_tree_after_node_saved, sender=Page)
-post_save.connect(rebuild_tree_after_node_saved, sender=PageCustomView)
-post_save.connect(rebuild_tree_after_node_saved, sender=PageDirectLink)
+#post_save.connect(rebuild_tree_after_node_saved, sender=Page)
+#post_save.connect(rebuild_tree_after_node_saved, sender=PageCustomView)
+#post_save.connect(rebuild_tree_after_node_saved, sender=PageDirectLink)
 
 
 """

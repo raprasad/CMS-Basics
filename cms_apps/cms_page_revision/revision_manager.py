@@ -3,10 +3,10 @@ from cms_page.models import Page
 from cms_page_revision.models import PageRevision
 from django.db.models.signals import pre_save
 
-
 def make_revision(page_obj):
     if page_obj is None:
         return False
+
         
     revision = PageRevision(page=page_obj\
                 ,name=page_obj.name\
@@ -63,7 +63,7 @@ def handle_revision_restore(page_revision_obj):
     #------------------------------
     #disconnect_revision_signal()
     #------------------------------
-    for attr in PageRevision.get_attributes_to_restore():
+    for attr in page_revision_obj.__class__.get_attributes_to_restore():
         revision_val = page_revision_obj.__dict__.get(attr, None)
         if revision_val is not None:
             page_to_revise.__dict__.update({attr : revision_val})

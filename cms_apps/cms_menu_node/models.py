@@ -128,7 +128,7 @@ class Node(models.Model):
         """Before deleting the node, assign a new parent to its children 
         and clear the parent FK connections"""
 
-        disconnect_node_signals()
+        disconnect_node_signals(Node)
 
         children = self.node_set.all()
         if children.count() > 0:        # does the node have children
@@ -148,7 +148,7 @@ class Node(models.Model):
                         
         self.node_set.clear()   # clear the FK connections
 
-        connect_node_signals()                                
+        connect_node_signals(Node)                                
         super(Node, self).delete()
         #rebuild_tree_after_node_saved()
      
@@ -234,7 +234,8 @@ class Node(models.Model):
 # ------------------------------------------
 
 from cms_menu_node.tree_builder import connect_node_signals, disconnect_node_signals, rebuild_tree_after_node_saved
-connect_node_signals()  # connect signals to rebuild tree and ensure one, and only one, root node
+
+#connect_node_signals()  # connect signals to rebuild tree and ensure one, and only one, root node
 #check_for_single_root, rebuild_tree_after_node_saved
 
 # ------------------------------------------

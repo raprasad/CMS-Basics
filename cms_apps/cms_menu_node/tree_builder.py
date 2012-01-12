@@ -1,10 +1,9 @@
 from cms_common.msg_util import *
-from cms_menu_node.models import Node
 from django.db.models.signals import pre_save, post_save, post_delete     
+#from cms_menu_node.models import Node
 
 
-
-def rebuild_tree_after_node_saved(sender=None, **kwargs):
+def rebuild_tree_after_node_saved(sender, **kwargs):
     """Rebuild the tree each time a Node is saved.
     This includes:
         - making sure a root exists
@@ -18,28 +17,29 @@ def rebuild_tree_after_node_saved(sender=None, **kwargs):
     if not calling_node:
         return
 
+    NODE_CLASS = sender
 
     # to avoid infinite loop, disconnect the post-save signal
     #--------------------------
-    disconnect_node_signals()
+    disconnect_node_signals(NODE_CLASS)
     #--------------------------
         
     # get the root node -- assume there is only one!
     root_node = None
     try:
-        root_node = Node.objects.get(is_root=True, visible=True)
-    except Node.DoesNotExist:
+        root_node = NODE_CLASS.objects.get(is_root=True, visible=True)
+    except NODE_CLASS.DoesNotExist:
         # No root node or more than one - Fix it!
         #msg('Root does not Exist!')
         check_for_single_root(calling_node)
-    except Node.MultipleObjectsReturned:
+    except NODE_CLASS.MultipleObjectsReturned:
         check_for_single_root(calling_node)
     
     if root_node is None:
         try:
-            root_node = Node.objects.get(is_root=True, visible=True)
-        except Node.DoesNotExist:
-            connect_node_signals()
+            root_node = NODE_CLASS.objects.get(is_root=True, visible=True)
+        except NODE_CLASS.DoesNotExist:
+            connect_node_signals(NODE_CLASS)
             #msg('Root Fix failed!')
             return
 
@@ -48,7 +48,7 @@ def rebuild_tree_after_node_saved(sender=None, **kwargs):
     rebuild_tree(root_node)
     
     # (2) set the menu level attribute (menu depth) and the sibling order
-    for n in Node.objects.all():
+    for n in NODE_CLASS.objects.all():
         n.set_menu_level()
         n.sibling_order = n.left_val
         n.save()
@@ -56,7 +56,7 @@ def rebuild_tree_after_node_saved(sender=None, **kwargs):
     
     # re-connect the post-save signal
     #--------------------------
-    connect_node_signals()
+    connect_node_signals(NODE_CLASS)
     #--------------------------
     
     
@@ -67,11 +67,16 @@ def rebuild_tree(parent_node, left_val=1):
     Modified from PHP example here: http://blogs.sitepoint.com/hierarchical-data-database-2/
         To run: rebuild_tree(root_node)
     """
+    if parent_node is None:
+        return
+    
+    NODE_CLASS = parent_node.__class__
+       
     #msg('rebuild tree: [%s][%s]' % (parent_node, left_val))
     right_val = left_val + 1
     
     # get children of this node
-    for child_node in Node.objects.filter(parent=parent_node, visible=True).order_by('sibling_order'):
+    for child_node in NODE_CLASS.objects.filter(parent=parent_node, visible=True).order_by('sibling_order'):
         # for each child of this node "right_val" is the current right value,
         # which is incremented by the rebuild_tree function   
         right_val = rebuild_tree(child_node, right_val)
@@ -94,10 +99,11 @@ def rebuild_tree_after_node_deleted(sender, **kwargs):
     if not node_to_delete:
         return
 
+    NODE_CLASS =sender
     """
     Is this the last visible noded being deleted?  Then don't rebuild the tree
     """
-    if Node.objects.filter(visible=True).exclude(pk=node_to_delete.id).count()==0:
+    if NODE_CLASS.objects.filter(visible=True).exclude(pk=node_to_delete.id).count()==0:
         """We're doing this to prevent the 'deleted node' from being saved again
         (1) rebuild_tree being saved
         (2) calling "check_for_single_root"
@@ -126,6 +132,8 @@ def check_for_single_root(node_to_be_saved):            #sender=None, **kwargs):
     if node_to_be_saved is None:
         return
         
+    NODE_CLASS = node_to_be_saved.__class__
+    
     #msgt('node_to_be_saved: [obj:%s] [name:%s]' % ( node_to_be_saved, node_to_be_saved.name))
     #msg('id: %s' % node_to_be_saved.id)
 
@@ -136,7 +144,7 @@ def check_for_single_root(node_to_be_saved):            #sender=None, **kwargs):
     # check (1)
     #
     #msg('(1) Only visible node -> make it the root')
-    if node_to_be_saved and Node.objects.filter(visible=True).exclude(pk=node_to_be_saved.id).count() == 0:    
+    if node_to_be_saved and NODE_CLASS.objects.filter(visible=True).exclude(pk=node_to_be_saved.id).count() == 0:    
         node_to_be_saved.parent = None
         node_to_be_saved.visible = True # make sure it is visible
         node_to_be_saved.save()
@@ -145,7 +153,7 @@ def check_for_single_root(node_to_be_saved):            #sender=None, **kwargs):
 
     #msg('(2) Multiple root nodes  (multiple nodes with no parent)')
     #
-    root_nodes = Node.objects.filter(parent=None, visible=True).order_by('left_val', 'sibling_order')
+    root_nodes = NODE_CLASS.objects.filter(parent=None, visible=True).order_by('left_val', 'sibling_order')
     if root_nodes.count() > 1:
         #   Make the 1st node the root and the rest its children
         new_root_node = None
@@ -163,18 +171,18 @@ def check_for_single_root(node_to_be_saved):            #sender=None, **kwargs):
     #
     #
     #msg('(3) node_to_be_saved is not a root node, there is already 1 root node')
-    if node_to_be_saved and node_to_be_saved.parent is not None and Node.objects.filter(is_root=True, visible=True).exclude(pk=node_to_be_saved.id).count() ==1:
+    if node_to_be_saved and node_to_be_saved.parent is not None and NODE_CLASS.objects.filter(is_root=True, visible=True).exclude(pk=node_to_be_saved.id).count() ==1:
         #msg('ok')
         return
 
 
     #msg('(4) node_to_be_saved is a new root node, make the NTS parent of current root')
-    if node_to_be_saved and node_to_be_saved.parent is None and Node.objects.filter(visible=True).count() > 1:
+    if node_to_be_saved and node_to_be_saved.parent is None and NODE_CLASS.objects.filter(visible=True).count() > 1:
         #msg('-> yes')
         node_to_be_saved.visible = True # make sure it is visible
         node_to_be_saved.save()         # check This!
         
-        for rn in Node.objects.filter(parent=None, visible=True).exclude(pk=node_to_be_saved.id):
+        for rn in NODE_CLASS.objects.filter(parent=None, visible=True).exclude(pk=node_to_be_saved.id):
             if rn.id == node_to_be_saved.id or rn == node_to_be_saved:     # this is the new root, skip it
                 pass
             else:
@@ -184,7 +192,7 @@ def check_for_single_root(node_to_be_saved):            #sender=None, **kwargs):
         
     #msg('(5) There are no root nodes! Make a new root node by following the parent of current node')
     if node_to_be_saved is None:
-        visible_nodes = Node.objects.filter(visible=True).order_by('left_val', 'sibling_order')
+        visible_nodes = NODE_CLASS.objects.filter(visible=True).order_by('left_val', 'sibling_order')
         if visible_nodes.count() > 0:
             not_to_be_saved = visible_nodes[0]
         else:
@@ -200,15 +208,32 @@ def check_for_single_root(node_to_be_saved):            #sender=None, **kwargs):
     potential_root.save()
     
 
+def get_to_node_class(sender):
+    # get to the Node class
+    NODE_CLASS = None
+    if sender.__name__ == 'Node':
+        return sender
+    
+    base_classes = sender.__bases__
+    while not base_classes == ():
+        for bc in base_classes: 
+            if bc.__name__ == 'Node':
+                return bc
+    
+    if NODE_CLASS is None:
+        # log a critical err
+        return None
 
-def disconnect_node_signals():
+def disconnect_node_signals(node_obj_class):
+    node_obj_class = get_to_node_class(node_obj_class)  # in case sender is a child of Node
     """For Node: disconnect the post-save and pre-save signals"""
     #pre_save.disconnect(check_for_single_root, sender=Node)    
-    post_save.disconnect(rebuild_tree_after_node_saved, sender=Node)    
-    post_delete.disconnect(rebuild_tree_after_node_deleted, sender=Node)    
+    post_save.disconnect(rebuild_tree_after_node_saved, sender=node_obj_class)    
+    post_delete.disconnect(rebuild_tree_after_node_deleted, sender=node_obj_class)    
 
-def connect_node_signals():
+def connect_node_signals(node_obj_class):
+    node_obj_class = get_to_node_class(node_obj_class)  # in case sender is a child of Node
     """For Node: re-connect the post-save and pre-save signals"""
     #pre_save.connect(check_for_single_root, sender=Node)    
-    post_save.connect(rebuild_tree_after_node_saved, sender=Node)    
-    post_delete.connect(rebuild_tree_after_node_deleted, sender=Node)    
+    post_save.connect(rebuild_tree_after_node_saved, sender=node_obj_class)    
+    post_delete.connect(rebuild_tree_after_node_deleted, sender=node_obj_class)    
