@@ -187,7 +187,8 @@ class Node(models.Model):
     
     class Meta:
         ordering = ('left_val', )
-
+        verbose_name = 'Menu Item'
+        verbose_name_plural = 'Menu Items'
 
     @staticmethod
     def get_admin_parent_choices():
