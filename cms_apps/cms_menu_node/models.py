@@ -168,10 +168,10 @@ class Node(models.Model):
             # will throw Exception if actually reached here via cmd line or something
             raise ParentRelationshipCircular(self)
         
-        if Node.does_root_node_already_exist(self) and self.parent is None:
+        #if Node.does_root_node_already_exist(self) and self.parent is None:
             # this is handled in the cms_menu_node.forms
             # will throw Exception if actually reached here via cmd line or something
-            raise RootNodeAlreadyExists(self)
+        #    raise RootNodeAlreadyExists(self)
             
         # this node being assigned as a root
         if self.parent is None:        
@@ -208,9 +208,9 @@ class Node(models.Model):
         # before saving, check if this may potentially override an existing room        
         if instance.id:
             print 'id: %s' % instance.id
-            if Node.objects.filter(is_root=True).exclude(id=instance.id).count() > 0:
+            if Node.objects.filter(is_root=True, visible=True).exclude(id=instance.id).count() > 0:
                 return True
-        elif Node.objects.filter(is_root=True).count() > 0:
+        elif Node.objects.filter(is_root=True, visible=True).count() > 0:
             print 'no instance id'
             return True
             

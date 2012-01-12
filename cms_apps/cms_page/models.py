@@ -158,9 +158,9 @@ class PageImage(models.Model):
         ordering = ('nickname', 'entry_time')
 
 
-post_save.connect(rebuild_tree_after_node_saved, sender=Page)
-post_save.connect(rebuild_tree_after_node_saved, sender=PageCustomView)
-post_save.connect(rebuild_tree_after_node_saved, sender=PageDirectLink)
+#post_save.connect(rebuild_tree_after_node_saved, sender=Page)
+#post_save.connect(rebuild_tree_after_node_saved, sender=PageCustomView)
+#post_save.connect(rebuild_tree_after_node_saved, sender=PageDirectLink)
 
 
 """

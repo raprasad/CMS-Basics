@@ -20,11 +20,11 @@ class PageAdminForm(forms.ModelForm):
         
         # If the root already exist, don't let people accidentally change it
         # This is for "regular" users once this thing is in production.
-        if Node.objects.filter(visible=True).count() >= 2:
-            if self.instance and self.instance.is_root:
-                pass
-            else:
-                self.fields['parent'].required = True    
+        #if Node.objects.filter(visible=True).count() >= 2:
+        #    if self.instance and self.instance.is_root:
+        #        pass
+        #    else:
+        #        self.fields['parent'].required = True    
         
     class Meta:
         model = Page
@@ -37,14 +37,12 @@ class PageAdminForm(forms.ModelForm):
     def clean_parent(self):    
         new_parent = self.cleaned_data['parent']
 
-        '''if new_parent and self.instance:
-            if self.instance.id == new_parent.id:
-                raise forms.ValidationError("The Parent relationship is circular!  Please choose another parent!  (Or no parent for a root node)")
-        '''
-
         if Node.is_parent_relationship_circular(self.instance, new_parent=new_parent):
             raise forms.ValidationError("The Parent relationship is circular!  Please choose another parent!  (Or no parent for a root node)")
         
+        if Node.does_root_node_already_exist(self.instance) and not new_parent:
+            raise forms.ValidationError("Please choose a parent.  (A home/root node already exists.)")
+                
         return new_parent        
 
 class PageCustomViewAdminForm(forms.ModelForm):
@@ -57,14 +55,7 @@ class PageCustomViewAdminForm(forms.ModelForm):
         super(PageCustomViewAdminForm, self).__init__(*args, **kwargs)
         self.fields['parent'].choices = Node.get_admin_parent_choices()
 
-        # If the root already exist, don't let people accidentally change it
-        # This is for "regular" users once this thing is in production.
-        if Node.objects.filter(visible=True).count() >= 2:
-            if self.instance and self.instance.is_root:
-                pass
-        else:
-            self.fields['parent'].required = True
-        
+
     class Meta:
         model = PageCustomView
         widgets = {  'parent': forms.Select(attrs={'size': 10, 'width':100}) }
@@ -83,10 +74,12 @@ class PageCustomViewAdminForm(forms.ModelForm):
         new_parent = self.cleaned_data['parent']
 
         if Node.is_parent_relationship_circular(self.instance, new_parent=new_parent):
-            raise forms.ValidationError("The Parent relationship is circular!  Please choose another parent!  (Or no parent for a root node) ")
+            raise forms.ValidationError("The Parent relationship is circular!  Please choose another parent!  (Or no parent for a root node)")
 
-        return new_parent   
-             
+        if Node.does_root_node_already_exist(self.instance) and not new_parent:
+            raise forms.ValidationError("Please choose a parent.  (A home/root node already exists.)")
+
+        return new_parent             
 
 class PageDirectLinkAdminForm(forms.ModelForm):
     """Admin Form for a Node
@@ -98,13 +91,6 @@ class PageDirectLinkAdminForm(forms.ModelForm):
         super(PageDirectLinkAdminForm, self).__init__(*args, **kwargs)
         self.fields['parent'].choices = Node.get_admin_parent_choices()
 
-        # If the root already exist, don't let people accidentally change it
-        # This is for "regular" users once this thing is in production.
-        if Node.objects.filter(visible=True).count() >= 2:
-            if self.instance and self.instance.is_root:
-                pass
-        else:
-            self.fields['parent'].required = True
 
     class Meta:
         model = PageDirectLink
@@ -117,6 +103,8 @@ class PageDirectLinkAdminForm(forms.ModelForm):
         if Node.is_parent_relationship_circular(self.instance, new_parent=new_parent):
             raise forms.ValidationError("The Parent relationship is circular!  Please choose another parent!  (Or no parent for a root node)")
 
+        if Node.does_root_node_already_exist(self.instance) and not new_parent:
+            raise forms.ValidationError("Please choose a parent.  (A home/root node already exists.)")
         return new_parent        
 
 
