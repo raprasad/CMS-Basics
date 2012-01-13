@@ -17,7 +17,7 @@ def rebuild_tree_after_node_saved(sender, **kwargs):
     if not calling_node:
         return
 
-    NODE_CLASS = sender
+    NODE_CLASS = get_to_node_class(sender)
 
     # to avoid infinite loop, disconnect the post-save signal
     #--------------------------

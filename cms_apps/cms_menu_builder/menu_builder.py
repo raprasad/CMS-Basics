@@ -145,7 +145,7 @@ def get_menu_by_level(level=2):
     return build_menu(qs)
     
     
-def get_main_menu(with_children=True):
+def get_main_menu(with_children=True, with_root_node=True):
     """Shortcut to retrieve main menu nodes.
     The main menu consists of:
         (1) visible Nodes at menu_level=2  (menu_level=1 is the root)
@@ -176,7 +176,16 @@ def get_main_menu(with_children=True):
             l2_lookup.update({ l2_node.id : l2_node })        # update the lookup
     #return l2_nodes
 
-    fmt_lst = []
+    if with_root_node:
+        fmt_lst = get_menu_by_level(1)
+        '''try:
+            root_node = Node.objects.get(visible=True, is_root=True)
+            fmt_lst = [root_node]
+        except:
+            fmt_lst = []
+        '''
+    else:
+        fmt_lst = []
 
     for l2_id in l2_ordered_ids:
         fmt_lst.append(l2_lookup.get(l2_id))        # assume that all ids are in the list
