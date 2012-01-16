@@ -42,9 +42,24 @@ class Node(models.Model):
     def __unicode__(self):   
         return self.name        
     
+    def get_subclass_obj(self):
+        if self.subclass_name is None or self.subclass_name == '':
+            return None
         
+        try:
+            # e.g. if subclass_name = 'Page', then try eval('self.page')
+            return eval('self.%s' % self.subclass_name.lower() )
+        except:
+            pass
+        return None        
+        
+
     def get_absolute_url(self):
-        # for subclass overrides
+        # try use the "get_absolute_url" of the subclass such as Page, PageCustomView, PageDirectLink
+        subclass_obj = self.get_subclass_obj()
+        if subclass_obj is not None and 'get_absolute_url' in dir(subclass_obj):
+            return subclass_obj.get_absolute_url()
+
         return 'Node.get_absolute_url - override this function'
         
     

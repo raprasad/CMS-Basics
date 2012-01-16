@@ -209,20 +209,23 @@ def check_for_single_root(node_to_be_saved):            #sender=None, **kwargs):
     
 
 def get_to_node_class(sender):
-    # get to the Node class
-    NODE_CLASS = None
-    if sender.__name__ == 'Node':
-        return sender
-    
-    base_classes = sender.__bases__
-    while not base_classes == ():
-        for bc in base_classes: 
-            if bc.__name__ == 'Node':
-                return bc
-    
-    if NODE_CLASS is None:
+    if sender is None:
         # log a critical err
         msgx('FAIL:  NODE_CLASS is None')
+        
+    # get to the Node class
+    NODE_CLASS_NAME = 'Node'
+    if sender.__name__ == NODE_CLASS_NAME:
+        return sender
+    
+    # only checking depth of one level
+    for bc in sender.__bases__: 
+        if bc.__name__ == NODE_CLASS_NAME:
+            return bc
+                
+    # log a critical err
+    msgx('FAIL:  NODE_CLASS is None')
+
 
 def disconnect_node_signals(node_obj_class):
     node_obj_class = get_to_node_class(node_obj_class)  # in case sender is a child of Node
