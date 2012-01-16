@@ -56,7 +56,7 @@ class PageAdmin(admin.ModelAdmin):
                 PageRevisionInline,\
                 )
     
-    
+    filter_horizontal = ('tags',)
     readonly_fields = ('is_root', 'slug', 'breadcrumb', 'menu_level', 'left_val', 'right_val', 'created', 'modified', 'subclass_name',)# 'get_absolute_url')
     list_editable = ('sibling_order',)
     list_filter = ('visible', 'menu_level',)
@@ -69,6 +69,8 @@ class PageAdmin(admin.ModelAdmin):
                 , 'sibling_order'\
                 ]})\
             ,('Content', {'fields': [  'author', 'title', 'template' , 'content', 'teaser', ]})            
+            , ('Tags', {'fields': ['tags']})     
+            
             ,('Navigation (auto-filled)', {'fields': [ ('menu_level', 'is_root'),'breadcrumb', 'slug', ]})
             ,('Time Stamps', {'fields': [  ('start_publish_date', 'end_publish_date',), ('modified', 'created'), ]})
              ,('for Modified Preorder Tree Traversal', {'fields': [ ('left_val', 'right_val'), ]})

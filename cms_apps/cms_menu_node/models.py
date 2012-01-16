@@ -1,6 +1,8 @@
 from django.db import models
 from django.template.defaultfilters import slugify
 
+from tags.models import Tag     # from Poor-Mans-Tag
+
 from cms_common.msg_util import *
 from cms_menu_node.exceptions import ParentRelationshipCircular, RootNodeAlreadyExists
 
@@ -18,6 +20,8 @@ class Node(models.Model):
     
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL)
     visible = models.BooleanField(default=True)    # if visible is false, node is not included in 
+    
+    tags = models.ManyToManyField(Tag, blank=True, null=True)
      
     sibling_order = models.IntegerField(default=1, help_text='relative ordering among siblings')     # used for sibling sorting
     is_root = models.BooleanField(default=False, help_text='(auto-filled on save)')

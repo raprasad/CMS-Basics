@@ -27,7 +27,8 @@ class PageAdmin(NodeAdminBase):
                 , 'visible'\
                 , 'sibling_order'\
                 ]})\
-            ,('Content', {'fields': [  'author', 'title', 'template' , 'content', 'teaser', ]})            
+            ,('Content', {'fields': [  'author', 'title', 'template' , 'content', 'teaser', ]})       
+            , ('Tags', {'fields': ['tags']})     
             ,('Navigation (auto-filled)', {'fields': [ ('menu_level', 'is_root'),'breadcrumb', 'slug', ]})
             ,('Time Stamps', {'fields': [  ('start_publish_date', 'end_publish_date',), ('modified', 'created'), ]})
              ,('for Modified Preorder Tree Traversal', {'fields': [ ('left_val', 'right_val'), ]})
@@ -42,6 +43,7 @@ class PageCustomViewAdmin(admin.ModelAdmin):
     form = PageCustomViewAdminForm
     save_on_top = True
     readonly_fields = ('is_root', 'slug', 'breadcrumb', 'menu_level', 'left_val', 'right_val',  'subclass_name', 'created', 'modified', )
+    filter_horizontal = ('tags',)
     
     fieldsets = [
              ('Name / Parent', {'fields': ['name' \
@@ -51,6 +53,9 @@ class PageCustomViewAdmin(admin.ModelAdmin):
                 , 'visible'\
                 , 'sibling_order'\
                 ]})\
+                , ('Tags', {'classes': ('collapse',), \
+                    'fields': ['tags']})     \
+                
             ,('Navigation (auto-filled)', {'fields': [ ('menu_level', 'is_root'),'breadcrumb', 'slug', ]})
             ,('Time Stamps', {'fields': [   ('modified', 'created'), ]})
              ,('for Modified Preorder Tree Traversal', {'fields': [ ('left_val', 'right_val'), ]})
@@ -62,6 +67,7 @@ admin.site.register(PageCustomView, PageCustomViewAdmin)
 class PageDirectLinkAdmin(admin.ModelAdmin):
     form = PageAdminForm
     readonly_fields = ('is_root', 'slug', 'breadcrumb', 'menu_level', 'left_val', 'right_val',  'subclass_name', 'created', 'modified', 'direct_url')
+    filter_horizontal = ('tags',)
     
     fieldsets = [
              ('Name / Parent', {'fields': ['name' \
@@ -70,6 +76,8 @@ class PageDirectLinkAdmin(admin.ModelAdmin):
                 , 'visible'\
                 , 'sibling_order'\
                 ]})\
+            , ('Tags', {'classes': ('collapse',), \
+                'fields': ['tags']})     \
             ,('Navigation (auto-filled)', {'fields': [ ('menu_level', 'is_root'),'breadcrumb', 'slug', ]})
             ,('Time Stamps', {'fields': [   ('modified', 'created'), ]})
              ,('for Modified Preorder Tree Traversal', {'fields': [ ('left_val', 'right_val'), ]})

@@ -8,12 +8,13 @@ from cms_menu_node.forms import NodeAdminForm
 class NodeAdmin(NodeAdminBase):
 
     form = NodeAdminForm
-
+    filter_horizontal = ('tags',)
     fieldsets = [
              ('Name / Parent', {'fields': ['name' \
                 , 'parent'\
                 , 'visible'\
                 , 'sibling_order'\
+                , 'tags'
                 ]}),\
             ('Navigation', {'fields': [ 'menu_level', 'is_root','breadcrumb', 'slug', ]}),                
              ('for Modified Preorder Tree Traversal', {'fields': [ ('left_val', 'right_val'), ]}),                
