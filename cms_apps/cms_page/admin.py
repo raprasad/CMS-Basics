@@ -65,10 +65,10 @@ admin.site.register(PageCustomView, PageCustomViewAdmin)
     
          
 class PageDirectLinkAdmin(admin.ModelAdmin):
-    form = PageAdminForm
-    readonly_fields = ('is_root', 'slug', 'breadcrumb', 'menu_level', 'left_val', 'right_val',  'subclass_name', 'created', 'modified', 'direct_url')
+    form = PageDirectLinkAdminForm
+    readonly_fields = ('is_root', 'slug', 'breadcrumb', 'menu_level', 'left_val', 'right_val',  'subclass_name', 'created', 'modified')
     filter_horizontal = ('tags',)
-    
+   
     fieldsets = [
              ('Name / Parent', {'fields': ['name' \
                 , 'direct_url' \
@@ -84,5 +84,4 @@ class PageDirectLinkAdmin(admin.ModelAdmin):
             , ('Render Conveniences', {'fields': [ 'subclass_name',  ]}),                
          ]
 
-    
 admin.site.register(PageDirectLink, PageDirectLinkAdmin)
