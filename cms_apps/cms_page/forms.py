@@ -3,7 +3,7 @@ from cms_page.models import Page, PageDirectLink, PageCustomView
 from cms_menu_node.models import Node
 
 from urls import urlpatterns
-#from ckeditor.fields import CKEditorWidget
+from ckeditor.fields import CKEditorWidget
 
 from verify_page_custom_views import get_list_of_all_urls
 
@@ -29,8 +29,7 @@ class PageAdminForm(forms.ModelForm):
     class Meta:
         model = Page
         widgets = {  'parent': forms.Select(attrs={'size': 10, 'width':100}) \
-                    #, 'content' : CKEditorWidget(attrs={'class': 'default'}) \
-                    , 'content' : forms.Textarea(attrs={'class': 'mceEditor'}) \
+                    , 'content' : CKEditorWidget(config_name='default', attrs={}) \
                     ,'teaser': forms.Textarea(attrs={'rows':3, 'cols':40}) \
                     }
     
