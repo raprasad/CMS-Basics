@@ -22,12 +22,17 @@ class NodeProcessor:
     Trying to do this with fewer queries than a reverse lookup for --each-- node
 
     Instead, pull each subclass type based on the node ids in the queryset
+    
+    Also, adds: "selected_node" and "active_path" attributes
     """
     @staticmethod
     def add_node_subclasses(node_qs, active_path_ids=[]):
+    
         if node_qs is None:
             return node_qs
 
+        if active_path_ids is None:
+            active_path_ids = []
         # retrieve node subclass names.  e.g.: "Page", "PageDirect", "PageCustomView", etc
         subclass_dict = {}  # { subclass name : 1 }
         map(lambda x: subclass_dict.update({x.subclass_name:1}), node_qs)
@@ -61,12 +66,16 @@ class NodeProcessor:
                 formatted_node = subclass_obj
             else:
                 formatted_node = nd
-            
+
             if formatted_node.id in active_path_ids:
                 formatted_node.active_path = True
             else:
                 formatted_node.active_path = False
-            formatted_nodes.append(nd)              # subclass not found, use the Node
+                
+            if len(active_path_ids) > 0 and nd.id == active_path_ids[-1]:
+                formatted_node.selected_node = True
+                
+            formatted_nodes.append(formatted_node)      # subclass not found, use the Node
         return formatted_nodes
 
 

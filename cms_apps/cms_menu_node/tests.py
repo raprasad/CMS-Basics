@@ -4,7 +4,7 @@ from test_menu_builder import MenuBuilderTest
 
 def suite():
     suite = unittest.TestSuite()
-    suite.addTest(TreeRearrangement('runTest'))
-    suite.addTest(NodeTestCase('test_root'))
+    #suite.addTest(TreeRearrangement('runTest'))
+    #suite.addTest(NodeTestCase('test_root'))
     suite.addTest(MenuBuilderTest('runTest'))
     return suite        
