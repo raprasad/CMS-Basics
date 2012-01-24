@@ -1,6 +1,6 @@
 
 # Minimal classes to create pages with a hierarchical menu.
--- (more documentation to come on how to actually use this)
+-- (more documentation to come on how to actually use this--it was built for a specific project/website)
 
 Basic building blocks:
 
