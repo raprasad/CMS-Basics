@@ -23,5 +23,5 @@ Basic building blocks:
 * This function can be called to make sure that the names specified in the PageCustomView exist in the project's urls.py
 
 # Dependencies
-* (Poor-Man's-Tag)[https://github.com/raprasad/Poor-Mans-Tag], contains one Tag model with 5 attributes
-* (django-ckeditor)[https://github.com/raprasad/django-ckeditor], for using the ckeditor with a filebrowser for uploaded files.  The dependency may be removed by searching for/removing 'CKEditorWidget'
+* [Poor-Man's-Tag](https://github.com/raprasad/Poor-Mans-Tag), contains one Tag model with 5 attributes
+* [django-ckeditor](https://github.com/raprasad/django-ckeditor), for using the ckeditor with a filebrowser for uploaded files.  The dependency may be removed by searching for/removing 'CKEditorWidget'
