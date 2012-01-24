@@ -162,33 +162,3 @@ post_save.connect(rebuild_tree_after_node_saved, sender=Page)
 post_save.connect(rebuild_tree_after_node_saved, sender=PageCustomView)
 post_save.connect(rebuild_tree_after_node_saved, sender=PageDirectLink)
 
-
-"""
-Does this make sense?  
-    - get a list of url names to evaluate against on save
-    - can the kwarg argument be overloaded?
-    
-    ,    url(r'faculty-listing/$', 'view_faculty_listing', name='view_faculty_listing')
-    -> makes sense
-        
-    -> but how would this work for say a faculty detail page -- if you don't want a faculty member to be a subclass of Node
-    
-    # use faculty-detail "base" to make urls
-    # what about the breadcrumb?  why not: home -> faculty listing -> faculty detail: ?page_title?
-    ,    url(r'faculty-detail/$', 'view_faculty_detail', name='view_faculty_detail_base')
-    ,    url(r'faculty-detail/(?P<slug>\d{1,7})/$', 'view_faculty_detail', name='view_faculty_detail')
-    
-    
-    
-class PageCustomView(Node):
-
-    #view_name = models.CharField('title', max_length=255')
-    url_name = models.CharField('title', max_length=255')   # url is attached to a view
-    
-    def get_absolute_url(self):
-        
-        return reverse(self.url_name, kwargs={'id':self.id, 'slug':self.slug}
-        
-"""
-
-
