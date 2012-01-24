@@ -1,8 +1,9 @@
-# Dependency: https://github.com/raprasad/Poor-Mans-Tag
-# 	- contains one Tag model with 5 attributes
+#### Dependency: https://github.com/raprasad/Poor-Mans-Tag
+#### 	- contains one Tag model with 5 attributes
 
 
-Minimal classes to create a pages with a hierarchical menu.
+# Minimal classes to create a pages with a hierarchical menu.
+-- (more documentation to come on how to actually use this)
 
 Basic building blocks:
 

@@ -2,7 +2,7 @@
 
 import sys
 try: 
-    import settings
+    from django.conf import settings
     SHOW_DEBUG_MSG = settings.DEBUG
 except:
     SHOW_DEBUG_MSG = True
