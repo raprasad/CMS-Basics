@@ -2,7 +2,6 @@ from django import forms
 from cms_page.models import Page, PageDirectLink, PageCustomView
 from cms_menu_node.models import Node
 
-from urls import urlpatterns
 from ckeditor.fields import CKEditorWidget
 
 from verify_page_custom_views import get_list_of_all_urls

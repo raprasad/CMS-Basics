@@ -39,7 +39,7 @@ class PageAdmin(NodeAdminBase):
 admin.site.register(Page, PageAdmin)
 
 
-class PageCustomViewAdmin(admin.ModelAdmin):
+class PageCustomViewAdmin(NodeAdminBase):#admin.ModelAdmin):
     form = PageCustomViewAdminForm
     save_on_top = True
     readonly_fields = ('is_root', 'slug', 'breadcrumb', 'menu_level', 'left_val', 'right_val',  'subclass_name', 'created', 'modified', )
