@@ -65,6 +65,7 @@ class NodeProcessor:
             if subclass_obj:
                 formatted_node = subclass_obj
             else:
+                # subclass not found, use the Node
                 formatted_node = nd
 
             if formatted_node.id in active_path_ids:
@@ -75,7 +76,7 @@ class NodeProcessor:
             if len(active_path_ids) > 0 and nd.id == active_path_ids[-1]:
                 formatted_node.selected_node = True
                 
-            formatted_nodes.append(formatted_node)      # subclass not found, use the Node
+            formatted_nodes.append(formatted_node)      
         return formatted_nodes
 
 
