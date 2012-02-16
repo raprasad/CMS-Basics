@@ -87,6 +87,11 @@ class BreadcrumbHandler:
     
     def get_breadcrumbs(self):
         return self.breadcrumbs 
+    
+    def get_num_breadcrumbs(self):
+        if self.breadcrumbs:
+            return len(self.breadcrumbs)
+        return 0
         
     def has_last_breadcrumb_string(self):
         if self.last_breadcrumb_string is None:
