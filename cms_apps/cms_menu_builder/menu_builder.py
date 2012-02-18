@@ -115,16 +115,26 @@ class MenuBuilder:
         self.selected_node = kwargs.get('selected_node', None)  
         self.include_root_node = kwargs.get('include_root_node', True)
         self.breadcrumb_exclude_selected_node = kwargs.get('breadcrumb_exclude_selected_node', False)
+        self.build_full_tree_to_level3 = kwargs.get('build_full_tree_to_level3', False)
+        
         self.breadcrumb_nodes = []
         self.last_breadcrumb_string = None
         
         self.active_path_ids = []
         self.menu_items = []
-        self.build_the_menu()
+        if self.build_full_tree_to_level3:
+            self.build_menu_through_level3()
+        else:
+            self.build_the_menu()
     
     @staticmethod
-    def get_default_menu_items():
-        mb = MenuBuilder()
+    def get_default_menu_items(build_full_tree_to_level3=False):
+        """May be used if the selected page is not known.
+        However, in most cases the view would raise a Http404"""
+        if build_full_tree_to_level3:
+            mb = MenuBuilder(build_full_tree_to_level3=True)
+        else:
+            mb = MenuBuilder()            
         return mb.get_menu_items()
     
     def get_breadcrumb_handler(self):
@@ -173,6 +183,19 @@ class MenuBuilder:
     def get_menu_items(self):
         return self.menu_items
     
+    def build_menu_through_level3(self):
+        # step 1: build the breadcrumb trail, also sets active_path_ids
+        self.set_breadcrumb_nodes()
+
+        # step 2: get the menu items!
+        # 2a: get L2 menu items
+        l1_to_l3_menu_items = Node.objects.select_related('parent').filter(visible=True\
+                , menu_level__lte=3).order_by('left_val', 'sibling_order')
+
+        self.menu_items = NodeProcessor.add_node_subclasses(l1_to_l3_menu_items, self.active_path_ids)
+
+
+
     def build_the_menu(self):
         # step 1: build the breadcrumb trail, also sets active_path_ids
         self.set_breadcrumb_nodes()
@@ -231,6 +254,7 @@ class MenuBuilder:
             qs2 = qs1.filter(menu_level=level).order_by('left_val', 'sibling_order')
         
         return qs2
+        
         
     def get_left_menu_nodes(self, selected_node, l2_active_path_node_id):
         """Given a selected node, retrieve the nodes needed to create a left menu
