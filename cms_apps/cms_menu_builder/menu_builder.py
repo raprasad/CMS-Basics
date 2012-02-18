@@ -68,6 +68,13 @@ class NodeProcessor:
                 # subclass not found, use the Node
                 formatted_node = nd
 
+            if formatted_node.id in active_path_ids[1:]:
+                formatted_node.active_branch = True
+            elif formatted_node.parent is not None and formatted_node.parent.id in active_path_ids[1:]:
+                formatted_node.active_branch = True
+            else:
+                formatted_node.active_branch = False
+
             if formatted_node.id in active_path_ids:
                 formatted_node.active_path = True
             else:
@@ -194,7 +201,14 @@ class MenuBuilder:
 
         self.menu_items = NodeProcessor.add_node_subclasses(l1_to_l3_menu_items, self.active_path_ids)
 
-
+        # check if we need to go below L3
+        if self.selected_node is None or self.active_path_ids in (None, [],):
+            return
+        
+        if len(self.active_path_ids) < 4:
+            return
+        #(!) geet 
+        
 
     def build_the_menu(self):
         # step 1: build the breadcrumb trail, also sets active_path_ids

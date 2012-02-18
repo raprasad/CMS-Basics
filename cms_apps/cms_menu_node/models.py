@@ -89,7 +89,20 @@ class Node(models.Model):
         else:
             self.menu_level = mlevel + 1
 
-
+    def is_first_sibling(self):
+        if Node.objects.filter(parent=self.parent\
+                            , menu_level=self.menu_level # redundant
+                            , left_val__lt=self.left_val).count() == 0:
+            return True
+        return False
+        
+    def is_last_sibling(self):
+        if Node.objects.filter(parent=self.parent\
+                            , menu_level=self.menu_level # redundant
+                            , left_val__gt=self.left_val).count() == 0:
+            return True
+        return False
+        
     def get_nodes_on_path(self):
         pass
 
