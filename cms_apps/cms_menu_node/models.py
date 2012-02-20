@@ -28,6 +28,7 @@ class Node(models.Model):
     menu_level = models.IntegerField(default=-1, help_text='(auto-filled on save)')
     left_val = models.IntegerField(default=-1, help_text='(auto-filled on save)')
     right_val = models.IntegerField(default=-1, help_text='(auto-filled on save)')
+        
     
     # auto-filled by subclasses
     subclass_name = models.CharField(max_length=255, blank=True, default='')
@@ -90,18 +91,25 @@ class Node(models.Model):
             self.menu_level = mlevel + 1
 
     def is_first_sibling(self):
-        if Node.objects.filter(parent=self.parent\
-                            , menu_level=self.menu_level # redundant
-                            , left_val__lt=self.left_val).count() == 0:
-            return True
+        """On the MPTT menu tree, is this the first sibling?"""
+        if not self.parent:
+            return False
+        
+        if self.left_val > -1 and self.parent.left_val > -1:
+            if (self.left_val - 1) == self.parent.left_val:
+                return True
+        
         return False
         
     def is_last_sibling(self):
-        if Node.objects.filter(parent=self.parent\
-                            , menu_level=self.menu_level # redundant
-                            , left_val__gt=self.left_val).count() == 0:
-            return True
+        """On the MPTT menu tree, is this the last sibling?"""
+        if not self.parent:
+             return False
+        if self.right_val > -1 and self.parent.right_val > -1:
+            if (self.right_val + 1) == self.parent.right_val:
+                return True
         return False
+         
         
     def get_nodes_on_path(self):
         pass

@@ -17,7 +17,8 @@ class NodeAdmin(NodeAdminBase):
                 , 'tags'
                 ]}),\
             ('Navigation', {'fields': [ 'menu_level', 'is_root','breadcrumb', 'slug', ]}),                
-             ('for Modified Preorder Tree Traversal', {'fields': [ ('left_val', 'right_val'), ]}),                
+             ('for Modified Preorder Tree Traversal', {'fields': [ ('left_val', 'right_val' ,),  ]}),  
+             ('mptt additional convenience', {'fields': [ ('is_first_sibling', 'is_last_sibling', ),  ]}),  
              ('Render Conveniences', {'fields': [ 'subclass_name',  ]}),                
          ]
     

@@ -20,7 +20,7 @@ class PageAdmin(NodeAdminBase):
                # , ESCellColonyProcessingAdminInline \
                 )
                 
-    readonly_fields = ('is_root', 'slug', 'breadcrumb', 'menu_level', 'left_val', 'right_val',  'subclass_name', 'created', 'modified')
+    readonly_fields = ('is_root', 'slug', 'breadcrumb', 'menu_level', 'left_val', 'right_val',  'subclass_name', 'created', 'modified', 'is_first_sibling', 'is_last_sibling')
     fieldsets = [
              ('Name / Parent', {'fields': ['name' \
                 , 'parent'\
@@ -32,6 +32,8 @@ class PageAdmin(NodeAdminBase):
             ,('Navigation (auto-filled)', {'fields': [ ('menu_level', 'is_root'),'breadcrumb', 'slug', ]})
             ,('Time Stamps', {'fields': [  ('start_publish_date', 'end_publish_date',), ('modified', 'created'), ]})
              ,('for Modified Preorder Tree Traversal', {'fields': [ ('left_val', 'right_val'), ]})
+             ,('mptt additional convenience', {'fields': [ ('is_first_sibling', 'is_last_sibling', ),  ]})  
+             
             , ('Render Conveniences', {'fields': [ 'subclass_name',  ]}),                
          ]
 
@@ -42,7 +44,7 @@ admin.site.register(Page, PageAdmin)
 class PageCustomViewAdmin(NodeAdminBase):#admin.ModelAdmin):
     form = PageCustomViewAdminForm
     save_on_top = True
-    readonly_fields = ('is_root', 'slug', 'breadcrumb', 'menu_level', 'left_val', 'right_val',  'subclass_name', 'created', 'modified', )
+    readonly_fields = ('is_root', 'slug', 'breadcrumb', 'menu_level', 'left_val', 'right_val',  'subclass_name', 'created', 'modified',  'is_first_sibling', 'is_last_sibling')
     filter_horizontal = ('tags',)
     
     fieldsets = [
@@ -59,6 +61,8 @@ class PageCustomViewAdmin(NodeAdminBase):#admin.ModelAdmin):
             ,('Navigation (auto-filled)', {'fields': [ ('menu_level', 'is_root'),'breadcrumb', 'slug', ]})
             ,('Time Stamps', {'fields': [   ('modified', 'created'), ]})
              ,('for Modified Preorder Tree Traversal', {'fields': [ ('left_val', 'right_val'), ]})
+            ,  ('mptt additional convenience', {'fields': [ ('is_first_sibling', 'is_last_sibling', ),  ]}) 
+             
             , ('Render Conveniences', {'fields': [ 'subclass_name',  ]}),                
          ]
 admin.site.register(PageCustomView, PageCustomViewAdmin)
@@ -66,7 +70,7 @@ admin.site.register(PageCustomView, PageCustomViewAdmin)
          
 class PageDirectLinkAdmin(admin.ModelAdmin):
     form = PageDirectLinkAdminForm
-    readonly_fields = ('is_root', 'slug', 'breadcrumb', 'menu_level', 'left_val', 'right_val',  'subclass_name', 'created', 'modified')
+    readonly_fields = ('is_root', 'slug', 'breadcrumb', 'menu_level', 'left_val', 'right_val',  'subclass_name', 'created', 'modified',  'is_first_sibling', 'is_last_sibling')
     filter_horizontal = ('tags',)
    
     fieldsets = [
@@ -81,6 +85,8 @@ class PageDirectLinkAdmin(admin.ModelAdmin):
             ,('Navigation (auto-filled)', {'fields': [ ('menu_level', 'is_root'),'breadcrumb', 'slug', ]})
             ,('Time Stamps', {'fields': [   ('modified', 'created'), ]})
              ,('for Modified Preorder Tree Traversal', {'fields': [ ('left_val', 'right_val'), ]})
+             , ('mptt additional convenience', {'fields': [ ('is_first_sibling', 'is_last_sibling', ),  ]})
+             
             , ('Render Conveniences', {'fields': [ 'subclass_name',  ]}),                
          ]
 
