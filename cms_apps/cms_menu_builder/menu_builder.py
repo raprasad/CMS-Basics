@@ -27,7 +27,6 @@ class NodeProcessor:
     """
     @staticmethod
     def add_node_subclasses(node_qs, active_path_ids=[]):
-    
         if node_qs is None:
             return node_qs
 
@@ -36,7 +35,7 @@ class NodeProcessor:
         # retrieve node subclass names.  e.g.: "Page", "PageDirect", "PageCustomView", etc
         subclass_dict = {}  # { subclass name : 1 }
         map(lambda x: subclass_dict.update({x.subclass_name:1}), node_qs)
-        
+
         # retrieve node ids
         node_ids = map(lambda x: x.id, node_qs)
 
@@ -53,8 +52,7 @@ class NodeProcessor:
             subclass_object_qs = page_obj_type.objects.select_related().filter(id__in=node_ids, visible=True) 
             # put subclass instances into lookup
             for subclass_obj in subclass_object_qs:  
-                    node_subclass_objects.update({ subclass_obj.id: subclass_obj })
-
+                node_subclass_objects.update({ subclass_obj.id: subclass_obj })
         # Iterate through the nodes and, if subclass available, REPLACE with the appropriate 'subclass'
         #
         formatted_nodes = []
@@ -70,11 +68,11 @@ class NodeProcessor:
 
             if formatted_node.id in active_path_ids[1:]:
                 formatted_node.active_branch = True
-            elif formatted_node.parent is not None and formatted_node.parent.id in active_path_ids[1:]:
+            elif formatted_node.parent_node_id in active_path_ids[1:]:
                 formatted_node.active_branch = True
             else:
                 formatted_node.active_branch = False
-
+            
             if formatted_node.id in active_path_ids:
                 formatted_node.active_path = True
             else:
@@ -194,7 +192,7 @@ class MenuBuilder:
     def build_menu_through_level3(self):
         # step 1: build the breadcrumb trail, also sets active_path_ids
         self.set_breadcrumb_nodes()
-
+        
         # step 2: get the menu items!
         # 2a: get L2 menu items
         l1_to_l3_menu_items = Node.objects.select_related('parent').filter(visible=True\
@@ -208,7 +206,6 @@ class MenuBuilder:
         
         if len(self.active_path_ids) < 4:
             return
-        #(!) geet 
         
 
     def build_the_menu(self):
@@ -248,7 +245,7 @@ class MenuBuilder:
         all_menu_items = []
         for idx, l2_mi in enumerate(l2_menu_items):
             all_menu_items.append(l2_mi)
-            if l2_mi.id == sub_menu_items[0].parent.id:        # check above that sub_menu_items.count() is > 0
+            if l2_mi.id == sub_menu_items[0].parent_node_id:        # check above that sub_menu_items.count() is > 0
                 all_menu_items += sub_menu_items    
         
         self.menu_items = NodeProcessor.add_node_subclasses(all_menu_items, self.active_path_ids)
@@ -324,12 +321,11 @@ class MenuBuilder:
             return None
 
         # include the selected node, neeeded for active_path_ids
-        qs = Node.objects.filter(visible=True\
+        qs = Node.objects.select_related().filter(visible=True\
                     , left_val__lte=selected_node.left_val\
                     , right_val__gte=selected_node.right_val).order_by('left_val')
-
-        self.active_path_ids = map(lambda x: x.id, qs)      # pull the active path ids for later use
         
+        self.active_path_ids = map(lambda x: x.id, qs)      # pull the active path ids for later use
         # exclude selected node from breadcrumb
         if self.breadcrumb_exclude_selected_node:       
             qs2 = qs.exclude(id=selected_node.id)
@@ -338,5 +334,4 @@ class MenuBuilder:
             # regular breadcrumb
             self.breadcrumb_nodes = NodeProcessor.add_node_subclasses(qs) 
         
-       
         

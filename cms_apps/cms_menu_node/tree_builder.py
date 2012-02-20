@@ -50,6 +50,7 @@ def rebuild_tree_after_node_saved(sender, **kwargs):
     # (2) set the menu level attribute (menu depth) and the sibling order
     for n in NODE_CLASS.objects.all():
         n.set_menu_level()
+        n.set_parent_node_id()
         n.sibling_order = n.left_val
         n.save()
     

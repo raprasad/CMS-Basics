@@ -14,11 +14,12 @@ class NodeAdmin(NodeAdminBase):
                 , 'parent'\
                 , 'visible'\
                 , 'sibling_order'\
+                
                 , 'tags'
                 ]}),\
             ('Navigation', {'fields': [ 'menu_level', 'is_root','breadcrumb', 'slug', ]}),                
              ('for Modified Preorder Tree Traversal', {'fields': [ ('left_val', 'right_val' ,),  ]}),  
-             ('mptt additional convenience', {'fields': [ ('is_first_sibling', 'is_last_sibling', ),  ]}),  
+             ('mptt additional convenience', {'fields': [ ('is_first_sibling', 'is_last_sibling', 'parent_node_id', ),  ]}),  
              ('Render Conveniences', {'fields': [ 'subclass_name',  ]}),                
          ]
     

@@ -19,6 +19,8 @@ class Node(models.Model):
     slug = models.SlugField(max_length=255, blank=True, help_text='(auto-filled on save)')
     
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL)
+    parent_node_id = models.IntegerField(default=-1, help_text='(auto-filled on save)')
+    
     visible = models.BooleanField(default=True)    # if visible is false, node is not included in 
     
     tags = models.ManyToManyField(Tag, blank=True, null=True)
@@ -81,7 +83,14 @@ class Node(models.Model):
                 
             #return '%s %s' % (' -- | -- ' * (self.menu_level-1), self.name)
         
-        
+    def set_parent_node_id(self):
+        """Explicitly set the parent node id.  This is accessed frequently.  
+        Since the parent may be null, the parent.id is not picked up by selected_related()"""
+        if self.parent and self.parent.id:
+            self.parent_node_id = self.parent.id
+        else:
+            self.parent_node_id = -1
+            
     def set_menu_level(self):
         mlevel = Node.objects.filter(left_val__lt=self.left_val\
                             , right_val__gt=self.right_val).count()
