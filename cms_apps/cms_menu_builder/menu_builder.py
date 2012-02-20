@@ -198,7 +198,7 @@ class MenuBuilder:
         # step 2: get the menu items!
         # 2a: get L2 menu items
         l1_to_l3_menu_items = Node.objects.select_related('parent').filter(visible=True\
-                , menu_level__lte=3).order_by('left_val', 'sibling_order')
+                , menu_level__lte=5).order_by('left_val', 'sibling_order')
 
         self.menu_items = NodeProcessor.add_node_subclasses(l1_to_l3_menu_items, self.active_path_ids)
 
