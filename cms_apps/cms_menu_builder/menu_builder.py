@@ -123,6 +123,7 @@ class MenuBuilder:
         self.include_root_node = kwargs.get('include_root_node', True)
         self.breadcrumb_exclude_selected_node = kwargs.get('breadcrumb_exclude_selected_node', False)
         self.build_full_tree_to_level3 = kwargs.get('build_full_tree_to_level3', False)
+        self.is_mobile_browser = kwargs.get('is_mobile_browser', False)
         
         self.breadcrumb_nodes = []
         self.last_breadcrumb_string = None
