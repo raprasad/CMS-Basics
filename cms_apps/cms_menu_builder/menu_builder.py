@@ -209,48 +209,50 @@ class MenuBuilder:
         
 
     def build_the_menu(self):
+        """Retrieve the L1 and L2 menus.
+        In addition, if selected_node is below L2, retrieve:
+            - selected node siblings 
+            - selected node descendants one level below it
+        """
         # step 1: build the breadcrumb trail, also sets active_path_ids
         self.set_breadcrumb_nodes()
         
+        # Pull the L2 menu item on the active path (if it exists)
+        if self.selected_node and self.selected_node.menu_level == 2:   # is it the selected node
+            l2_node_of_active_path = self.selected_node  
+        elif self.active_path_ids and len(self.active_path_ids) >= 2:   # find in active_path_ids list
+            try:
+                l2_node_of_active_path = Node.objects.get(visible=True, id=self.active_path_ids[1])
+            except:
+                l2_node_of_active_path = None
+        else:
+            l2_node_of_active_path = None
+
         # step 2: get the menu items!
-        
-        # 2a: get L2 menu items
-        l2_menu_items = self.get_menu_by_level(2, self.include_root_node)
-        
-        if l2_menu_items is None:
-            self.menu_items = NodeProcessor.add_node_subclasses(l2_menu_items, self.active_path_ids)
-            return
-            
-        # 2b: no 'selected_node', menu_items are the l2_menu_items
-        if self.selected_node is None or self.active_path_ids in (None, [],):
-            self.menu_items =  NodeProcessor.add_node_subclasses(l2_menu_items, self.active_path_ids)
-            return
-            
-        # 2c: get the submenu items related to the 'selected_node':
-        #           parents, siblings, and descendants 1 level down
-        if len(self.active_path_ids) < 2:
-            self.menu_items = NodeProcessor.add_node_subclasses(l2_menu_items, self.active_path_ids)
-            return
-            
-        l2_active_path_node_id = self.active_path_ids[1]
-        
-        # returns None or a queryset
-        sub_menu_items = self.get_left_menu_nodes(self.selected_node, l2_active_path_node_id) 
-        
-        if sub_menu_items is None or sub_menu_items.count()==0:      # nothing found, menu_items are the l2 items            
-            self.menu_items = NodeProcessor.add_node_subclasses(l2_menu_items, self.active_path_ids)
-            return
-            
-        # at the L2 level, insert the sub_menu_items
-        all_menu_items = []
-        for idx, l2_mi in enumerate(l2_menu_items):
-            all_menu_items.append(l2_mi)
-            if l2_mi.id == sub_menu_items[0].parent_node_id:        # check above that sub_menu_items.count() is > 0
-                all_menu_items += sub_menu_items    
-        
+        qs1 = Node.objects.select_related('parent').filter(visible=True)
+        if self.selected_node and l2_node_of_active_path:
+            # menu_level 2 | siblings and above on active path | selected node direct descendents 
+            menu_items = qs1.filter(\
+                            Q(menu_level__lte=2) |    
+                            Q(left_val__gt=l2_node_of_active_path.left_val\
+                              , left_val__lt=l2_node_of_active_path.right_val\
+                              , menu_level__lte=self.selected_node.menu_level) | \
+                            Q(parent_node_id=self.selected_node.id))
+        else:
+            # get only level 2 menus
+            menu_items = qs1.filter(Q(menu_level__lte=2))
+         
+        # exclude the root node
+        if not self.include_root_node:
+            menu_items = menu_items.exclude(menu_level=1)   # remove the root    
+
+        all_menu_items = menu_items.order_by('left_val', 'sibling_order').distinct()
+
         self.menu_items = NodeProcessor.add_node_subclasses(all_menu_items, self.active_path_ids)
-    
-    def get_menu_by_level(self, level, include_root_node=False):
+        
+       
+       
+    def get_menu_by_level(self, level, include_root_node):
         """Retrieve the menu for any given depth.  
             root node - level 1
             parent is root - level 2
@@ -265,7 +267,6 @@ class MenuBuilder:
         else:
             qs2 = qs1.filter(menu_level=level).order_by('left_val', 'sibling_order')
         
-        return qs2
         
         
     def get_left_menu_nodes(self, selected_node, l2_active_path_node_id):
