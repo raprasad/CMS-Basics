@@ -1,3 +1,5 @@
+import os
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -44,8 +46,12 @@ class Page(Node):
 
     def __unicode__(self):
         return self.title
-        
     
+    def get_template_basename(self):
+        if self.template:
+            return os.path.basename(self.template)
+        return None
+        
     def get_page_url_by_id(self):
         return reverse('view_page_by_id', kwargs={ 'page_id' : self.id })
         
