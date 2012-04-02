@@ -108,6 +108,7 @@ class BreadcrumbHandler:
             return None        
         return str(self.last_breadcrumb_string)
         
+
         
 class MenuBuilder:
     """Used to build various menus and add 'active_path' attribute
@@ -123,6 +124,10 @@ class MenuBuilder:
         self.build_full_tree_to_level3 = kwargs.get('build_full_tree_to_level3', False)
         self.is_mobile_browser = kwargs.get('is_mobile_browser', False)
         
+        self.is_left_menu = kwargs.get('is_left_menu', False)
+        
+        
+        
         self.breadcrumb_nodes = []
         self.last_breadcrumb_string = None
         
@@ -130,6 +135,9 @@ class MenuBuilder:
         self.menu_items = []
         if self.build_full_tree_to_level3:
             self.build_menu_through_level3()
+        elif self.is_left_menu:
+            self.build_left_menu()  # minimum: selected L2, all L3 under L2
+            #self.build_the_menu()
         else:
             self.build_the_menu()
     
@@ -208,6 +216,73 @@ class MenuBuilder:
             return
         
 
+    def get_l2_menu_item_on_active_path(self):
+        """
+        This assumes "self.set_breadcrumb_nodes" has already been called
+        """
+        if self.selected_node and self.selected_node.menu_level == 2:   
+            # It is the selected node
+            l2_node_of_active_path = self.selected_node  
+        
+        elif self.active_path_ids and len(self.active_path_ids) >= 2:   
+            # find in active_path_ids list
+            try:
+                l2_node_of_active_path = Node.objects.get(visible=True, id=self.active_path_ids[1])
+            except:
+                l2_node_of_active_path = None
+        else:
+            l2_node_of_active_path = None
+        
+        return l2_node_of_active_path
+
+    def build_left_menu(self):
+        """Retrieve the L1 and L2 menus.
+        In addition, if selected_node is below L2, retrieve:
+            - selected node siblings 
+            - selected node descendants one level below it
+        """
+        # step 1: build the breadcrumb trail, also sets active_path_ids
+        self.set_breadcrumb_nodes()
+
+        # Pull the L2 menu item on the active path (if it exists)
+        l2_node_of_active_path = self.get_l2_menu_item_on_active_path()
+
+        # step 2: get the menu items!
+        qs1 = Node.objects.select_related('parent').filter(visible=True)
+        if self.selected_node and l2_node_of_active_path:
+            # Show at least the 3rd menu level, more if node selected is fourth or more
+            menu_level_to_check = max(3, self.selected_node.menu_level)
+
+            # Query the following:
+            #   fyi: menu level, or level, refers to Node.menu_level attribute where 
+            #           - Root is menu_level=1, 
+            #           - Main Menu is menu_level=2, etc
+            #
+            # - Starting with main menu item, choose its tree, down to the menu level of the selected page
+            #           - covers main menu to max(Level 3, selected_page Level)
+            #
+            # - Anything where parent is selected node (one step lower than initial part of query)
+            #
+            menu_items = qs1.filter(visible=True).filter( \
+                    Q(left_val__gte=l2_node_of_active_path.left_val,\
+                        left_val__lt=l2_node_of_active_path.right_val,\
+                        menu_level__lte=menu_level_to_check) |\
+                        Q(parent=self.selected_node) \
+                         ).order_by('left_val')
+            
+        else:
+            # get only level 2 menus
+            menu_items = qs1.filter(Q(menu_level__lte=2))
+
+        # if specified, exclude the root node
+        if not self.include_root_node:
+            menu_items = menu_items.exclude(menu_level=1)   # remove the root    
+
+        all_menu_items = menu_items.order_by('left_val', 'sibling_order').distinct()
+
+        self.menu_items = NodeProcessor.add_node_subclasses(all_menu_items, self.active_path_ids)
+
+
     def build_the_menu(self):
         """Retrieve the L1 and L2 menus.
         In addition, if selected_node is below L2, retrieve:
@@ -218,16 +293,8 @@ class MenuBuilder:
         self.set_breadcrumb_nodes()
         
         # Pull the L2 menu item on the active path (if it exists)
-        if self.selected_node and self.selected_node.menu_level == 2:   # is it the selected node
-            l2_node_of_active_path = self.selected_node  
-        elif self.active_path_ids and len(self.active_path_ids) >= 2:   # find in active_path_ids list
-            try:
-                l2_node_of_active_path = Node.objects.get(visible=True, id=self.active_path_ids[1])
-            except:
-                l2_node_of_active_path = None
-        else:
-            l2_node_of_active_path = None
-
+        l2_node_of_active_path = self.get_l2_menu_item_on_active_path()
+       
         # step 2: get the menu items!
         qs1 = Node.objects.select_related('parent').filter(visible=True)
         if self.selected_node and l2_node_of_active_path:

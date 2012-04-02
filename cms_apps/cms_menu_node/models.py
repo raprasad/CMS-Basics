@@ -21,7 +21,9 @@ class Node(models.Model):
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL)
     parent_node_id = models.IntegerField(default=-1, help_text='(auto-filled on save)')
     
-    visible = models.BooleanField(default=True)    # if visible is false, node is not included in 
+    visible = models.BooleanField(default=True)    # if visible is false, node is not available
+    
+    #show_in_menu = models.BooleanField(default=True)    # if false, no breadcrumb or menu
     
     tags = models.ManyToManyField(Tag, blank=True, null=True)
      
