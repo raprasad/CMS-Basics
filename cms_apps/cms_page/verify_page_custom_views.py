@@ -40,7 +40,7 @@ def get_list_of_all_urls(remove_admin_urls=True, as_choices=False):
     
     URL_NAMES = []  # reset global variable
     root_urlconf = __import__(settings.ROOT_URLCONF) 
-    url_fname = str(settings.ROOT_URLCONF).split('.')[-1]   # e.g. 'urls_laptop' from 'btvc.urls_laptop'
+    url_fname = str(settings.ROOT_URLCONF).split('.')[-1]   # e.g. 'urls_laptop' from 'mcb_website.urls_laptop'
     url_pattern_name_to_eval = eval('root_urlconf.%s.urlpatterns' % url_fname)
     url_names = load_url_pattern_names(url_pattern_name_to_eval)
     
