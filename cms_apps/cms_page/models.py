@@ -76,7 +76,7 @@ class PageCustomView(Node):
     First Attempt at it"""
     
     url_name = models.CharField(max_length=255, help_text='Needs to exist in the projects urls.py files', unique=True)
-    url_has_slug_attribute = models.BooleanField(default=True, help_text='optional')
+    url_has_slug_attribute = models.BooleanField(default=False, help_text='optional')
     url_has_id_attribute = models.BooleanField(help_text='optional')
 
     created = models.DateTimeField(null=True, blank=True, auto_now_add=True)
