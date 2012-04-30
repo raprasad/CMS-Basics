@@ -216,24 +216,41 @@ class MenuBuilder:
             return
         
 
+    def get_menu_item_on_active_path(self, item_num):
+        """ 1 = 1st item on active path
+            2 = 2nd item on active path
+            etc...
+        """
+        if not str(item_num).isdigit():
+            return None
+            
+        item_num = int(item_num)
+        
+        if self.selected_node and self.selected_node.menu_level == item_num:   
+            return self.selected_node  
+            
+        if self.active_path_ids and len(self.active_path_ids) >= item_num:   
+            try:
+                return Node.objects.get(visible=True, id=self.active_path_ids[item_num-1])
+            except:
+                pass
+
+        return None
+        
+
+    def get_l3_menu_item_on_active_path(self):
+        """
+        This assumes "self.set_breadcrumb_nodes" has already been called
+        """
+        return self.get_menu_item_on_active_path(3)
+
+    
     def get_l2_menu_item_on_active_path(self):
         """
         This assumes "self.set_breadcrumb_nodes" has already been called
         """
-        if self.selected_node and self.selected_node.menu_level == 2:   
-            # It is the selected node
-            l2_node_of_active_path = self.selected_node  
-        
-        elif self.active_path_ids and len(self.active_path_ids) >= 2:   
-            # find in active_path_ids list
-            try:
-                l2_node_of_active_path = Node.objects.get(visible=True, id=self.active_path_ids[1])
-            except:
-                l2_node_of_active_path = None
-        else:
-            l2_node_of_active_path = None
-        
-        return l2_node_of_active_path
+        return self.get_menu_item_on_active_path(2)
+
 
     def build_left_menu(self):
         """Retrieve the L1 and L2 menus.
@@ -253,6 +270,34 @@ class MenuBuilder:
             # Show at least the 3rd menu level, more if node selected is fourth or more
             menu_level_to_check = max(3, self.selected_node.menu_level)
 
+            qclauses = [ Q(parent=l2_node_of_active_path) # L3 under L2 \
+                    , Q(parent=self.selected_node)  # descendents of selected node\
+                    ]
+
+            # A bit messy, show left menu for L3 to L6
+            #
+            if self.selected_node.menu_level > 3:        # greater than L3
+                qclauses.append(Q(parent=self.selected_node.parent))  # siblings 
+                
+                l3_node_of_active_path = self.get_l3_menu_item_on_active_path()
+                #print 'l3_node_of_active_path', l3_node_of_active_path
+                if l3_node_of_active_path:
+                    qclauses.append(Q(parent=l3_node_of_active_path))       # siblings of L3
+                    # active tree down from L3
+                    qclauses.append(Q(left_val__gt=l3_node_of_active_path.left_val\
+                                , left_val__lt=l3_node_of_active_path.right_val\
+                                , menu_level__lt=self.selected_node.menu_level))  # branches down from L3
+                
+            qclause_filters = reduce(lambda x,y: x | y, qclauses)
+                
+            menu_items = qs1.filter(visible=True).filter(qclause_filters).order_by('left_val')
+            
+
+            #left_val__lt=l2_node_of_active_path.right_val,\
+            #           menu_level__lte=menu_level_to_check) |\
+            #            Q(parent=self.selected_node) \
+            #          ).order_by('left_val')
+
             # Query the following:
             #   fyi: menu level, or level, refers to Node.menu_level attribute where 
             #           - Root is menu_level=1, 
@@ -263,13 +308,15 @@ class MenuBuilder:
             #
             # - Anything where parent is selected node (one step lower than initial part of query)
             #
+            # orig:
+            '''
             menu_items = qs1.filter(visible=True).filter( \
                     Q(left_val__gte=l2_node_of_active_path.left_val,\
                         left_val__lt=l2_node_of_active_path.right_val,\
                         menu_level__lte=menu_level_to_check) |\
                         Q(parent=self.selected_node) \
                          ).order_by('left_val')
-            
+            '''
         else:
             # get only level 2 menus
             menu_items = qs1.filter(Q(menu_level__lte=2))
