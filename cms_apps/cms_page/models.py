@@ -16,7 +16,7 @@ from cms_menu_node.tree_builder import rebuild_tree_after_node_saved
 #from ckeditor.fields import RichTextField
 from django.contrib.sites.models import Site
 
-
+EDIT_ONLY_OWN_PAGES_GROUP = 'EDIT_ONLY_OWN_PAGES_GROUP'
 
 class Page(Node):
     """ 

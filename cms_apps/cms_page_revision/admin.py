@@ -1,5 +1,5 @@
 from django.contrib import admin
-from cms_page.models import Page
+from cms_page.models import Page, EDIT_ONLY_OWN_PAGES_GROUP
 from cms_page.admin_base import PageImageInline, PageDocumentInline
 from cms_page.forms import PageAdminForm
 from cms_page_revision.models import PageRevision
@@ -76,6 +76,21 @@ class PageAdmin(admin.ModelAdmin):
              ,('for Modified Preorder Tree Traversal', {'fields': [ ('left_val', 'right_val'), ]})
             , ('Render Conveniences', {'fields': [ 'subclass_name',  ]}),                
          ]
+
+
+    def queryset(self, request):
+        qs = super(PageAdmin, self).queryset(request)
+        if request.user.is_superuser:
+            return qs
+        
+        try:
+            for g in request.user.groups.all(): 
+                if g.name == EDIT_ONLY_OWN_PAGES_GROUP:
+                    return qs.filter(author=request.user)
+        except:
+            pass
+        return qs
+
 
     class Media:
         pass

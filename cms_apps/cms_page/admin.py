@@ -1,12 +1,14 @@
 from django.contrib import admin
 
-from cms_page.models import Page, PageDirectLink, PageCustomView, PageImage, PageDocument
+from cms_page.models import Page, PageDirectLink, PageCustomView, PageImage, PageDocument, EDIT_ONLY_OWN_PAGES_GROUP
 
 from cms_page.forms import PageAdminForm, PageDirectLinkAdminForm, PageCustomViewAdminForm
 
 from cms_menu_node.admin_base import NodeAdminBase
 
 from cms_page.admin_base import PageImageInline, PageDocumentInline
+
+
 """
 Have base class/subclass for ModelAdmin?  B/c node info is repeated over and over?
 """
@@ -37,6 +39,19 @@ class PageAdmin(NodeAdminBase):
             , ('Render Conveniences', {'fields': [ 'subclass_name',  ]}),                
          ]
 
+    def queryset(self, request):
+
+        qs = super(PageAdmin, self).queryset(request)
+        if request.user.is_superuser:
+            return qs
+        try:
+            for g in request.user.groups.all(): 
+                if g.name == EDIT_ONLY_OWN_PAGES_GROUP:
+                    return qs.filter(author=request.user)
+        except:
+            pass
+        return qs
+        #return Page.objects.all()
     
 admin.site.register(Page, PageAdmin)
 
