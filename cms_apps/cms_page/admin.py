@@ -22,11 +22,12 @@ class PageAdmin(NodeAdminBase):
                # , ESCellColonyProcessingAdminInline \
                 )
                 
-    readonly_fields = ('is_root', 'slug', 'breadcrumb', 'menu_level', 'left_val', 'right_val',  'subclass_name', 'created', 'modified', 'is_first_sibling', 'is_last_sibling', 'parent_node_id')
+    readonly_fields = ('is_root', 'slug', 'breadcrumb', 'menu_level', 'left_val', 'right_val',  'subclass_name', 'created', 'modified', 'is_first_sibling', 'is_last_sibling', 'parent_node_id', )#'preview_page')
     fieldsets = [
              ('Name / Parent', {'fields': ['name' \
                 , 'parent'\
                 , 'visible'\
+                #, 'preview_page'\
                 , 'sibling_order'\
                 ]})\
             ,('Content', {'fields': [  'author', 'title', 'template' , 'content', 'teaser', ]})       

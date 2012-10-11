@@ -64,6 +64,13 @@ class Page(Node):
     def get_absolute_url(self):
         return self.get_page_url_by_slug()
 
+    def preview_page(self):
+        if not self.slug:
+            return None
+        lnk = '%s?preview=1' % (reverse('view_page_by_slug', kwargs={ 'page_slug' : self.slug }))
+        return '<a href="%s" target="_blank">preview</a>' % lnk
+    preview_page.allow_tags = True
+
     
     def save(self, **kwargs):
         """For children, set the subclass_name here!"""      

@@ -57,15 +57,15 @@ class PageAdmin(admin.ModelAdmin):
                 )
     
     filter_horizontal = ('tags',)
-    readonly_fields = ('is_root', 'slug', 'breadcrumb', 'menu_level', 'left_val', 'right_val', 'created', 'modified', 'subclass_name',)# 'get_absolute_url')
-    list_editable = ('sibling_order',)
+    readonly_fields = ('is_root', 'slug', 'breadcrumb', 'menu_level', 'left_val', 'right_val', 'created', 'modified', 'subclass_name', 'preview_page',)# 'get_absolute_url')
+    list_editable = ('sibling_order', )
     list_filter = ('visible', 'menu_level',)
     list_display = ('name', 'breadcrumb', 'sibling_order','menu_level', 'visible', 'is_root',  'left_val', 'right_val', )
     search_fields = ('name',)
     fieldsets = [
              ('Name / Parent', {'fields': ['name' \
                 , 'parent'\
-                , 'visible'\
+                , ('visible', 'preview_page',)\
                 , 'sibling_order'\
                 ]})\
             ,('Content', {'fields': [  'author', 'title', 'template' , 'content', 'teaser', ]})            
