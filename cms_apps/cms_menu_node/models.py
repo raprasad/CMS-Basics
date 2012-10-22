@@ -101,6 +101,29 @@ class Node(models.Model):
         else:
             self.menu_level = mlevel + 1
 
+
+    def is_first_sibling_check(self, parent_node):
+        """On the MPTT menu tree, is this the first sibling?
+        Used in loops where parent already loaded--avoid an extra query"""
+        if not parent_node:
+            return False
+
+        if self.left_val > -1 and parent_node.left_val > -1:
+            if (self.left_val - 1) == parent_node.left_val:
+                return True
+
+        return False
+
+    def is_last_sibling_check(self, parent_node):
+         """On the MPTT menu tree, is this the last sibling?
+         Used in loops where parent already loaded--avoid an extra query"""
+         if not parent_node:
+              return False
+         if self.right_val > -1 and parent_node.right_val > -1:
+             if (self.right_val + 1) == parent_node.right_val:
+                 return True
+         return False
+         
     def is_first_sibling(self):
         """On the MPTT menu tree, is this the first sibling?"""
         if not self.parent:

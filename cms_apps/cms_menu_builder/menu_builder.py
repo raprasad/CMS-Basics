@@ -24,6 +24,11 @@ class NodeProcessor:
     Instead, pull each subclass type based on the node ids in the queryset
     
     Also, adds: "selected_node" and "active_path" attributes
+    
+    10/22/2012 - Making it a little uglier:
+        > adding "last_sibling", "first_sibling" attributes
+        > menu_level_parent_lu = {}
+        
     """
     @staticmethod
     def add_node_subclasses(node_qs, active_path_ids=[]):
@@ -56,6 +61,7 @@ class NodeProcessor:
         # Iterate through the nodes and, if subclass available, REPLACE with the appropriate 'subclass'
         #
         formatted_nodes = []
+        menu_level_parent_lu = {}   # { menu_level : node }  e.g. { 2 : node obj, 3: node obj}
         for nd in node_qs:
             # if subclass is available, replace the node with its subclass
             #formatted_nodes.append(node_subclass_objects.get(nd.id, nd))
@@ -65,6 +71,12 @@ class NodeProcessor:
             else:
                 # subclass not found, use the Node
                 formatted_node = nd
+
+            menu_level_parent_lu.update({ formatted_node.menu_level : formatted_node })
+            
+            formatted_node.is_node_first_sibling = formatted_node.is_first_sibling_check(menu_level_parent_lu.get(formatted_node.menu_level-1))
+            formatted_node.is_node_last_sibling = formatted_node.is_last_sibling_check(menu_level_parent_lu.get(formatted_node.menu_level-1))
+            
 
             if formatted_node.id in active_path_ids[1:]:
                 formatted_node.active_branch = True
