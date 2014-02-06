@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from cms_page.models import Page, PageDirectLink, PageCustomView, PageImage, PageDocument, EDIT_ONLY_OWN_PAGES_GROUP
+from cms_page.models import Page, PageDirectLink, PageCustomView, PagePlaceHolder, PageImage, PageDocument, EDIT_ONLY_OWN_PAGES_GROUP
 
 from cms_page.forms import PageAdminForm, PageDirectLinkAdminForm, PageCustomViewAdminForm
 
@@ -83,7 +83,7 @@ class PageCustomViewAdmin(NodeAdminBase):#admin.ModelAdmin):
          ]
 admin.site.register(PageCustomView, PageCustomViewAdmin)
     
-         
+
 class PageDirectLinkAdmin(admin.ModelAdmin):
     form = PageDirectLinkAdminForm
     readonly_fields = ('is_root', 'slug', 'breadcrumb', 'menu_level', 'left_val', 'right_val',  'subclass_name', 'created', 'modified',  'is_first_sibling', 'is_last_sibling', 'parent_node_id')
@@ -107,3 +107,29 @@ class PageDirectLinkAdmin(admin.ModelAdmin):
          ]
 
 admin.site.register(PageDirectLink, PageDirectLinkAdmin)
+
+
+
+
+class PagePlaceHolderAdmin(admin.ModelAdmin):
+    form = PageDirectLinkAdminForm
+    readonly_fields = ('is_root', 'slug', 'breadcrumb', 'menu_level', 'left_val', 'right_val',  'subclass_name', 'created', 'modified',  'is_first_sibling', 'is_last_sibling', 'parent_node_id')
+    filter_horizontal = ('tags',)
+   
+    fieldsets = [
+             ('Name / Parent', {'fields': ['name' \
+                , 'parent'\
+                , 'visible'\
+                , 'sibling_order'\
+                ]})\
+            , ('Tags', {'classes': ('collapse',), \
+                'fields': ['tags']})     \
+            ,('Navigation (auto-filled)', {'fields': [ ('menu_level', 'is_root'),'breadcrumb', 'slug', ]})
+            ,('Time Stamps', {'fields': [   ('modified', 'created'), ]})
+             ,('for Modified Preorder Tree Traversal', {'fields': [ ('left_val', 'right_val'), ]})
+             , ('mptt additional convenience', {'fields': [ ('is_first_sibling', 'is_last_sibling', 'parent_node_id', ),  ]})
+             
+            , ('Render Conveniences', {'fields': [ 'subclass_name',  ]}),                
+         ]
+
+admin.site.register(PagePlaceHolder, PagePlaceHolderAdmin)

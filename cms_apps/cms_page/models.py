@@ -130,6 +130,24 @@ class PageDirectLink(Node):
 
         super(PageDirectLink, self).save()
 
+
+class PagePlaceHolder(Node):
+    created = models.DateTimeField(null=True, blank=True, auto_now_add=True)
+    modified = models.DateTimeField(null=True, blank=True, auto_now=True)
+
+    def get_absolute_url(self):
+        return "#"
+
+    def save(self, **kwargs):
+        """For children, set the subclass_name here!"""      
+        self.subclass_name = self.__class__.__name__
+
+        super(PagePlaceHolder, self).save()
+
+    class Meta:
+        verbose_name = 'Page place holders (Acts as a top level "container")'
+        verbose_name_plural = verbose_name
+
 class PageDocument(models.Model):
     """File uploads for a specific page"""
     page = models.ForeignKey(Page)
