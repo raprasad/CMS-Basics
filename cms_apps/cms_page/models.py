@@ -24,7 +24,7 @@ class Page(Node):
     
     Basic page content, including where the page falls within the navigation
     """
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, on_delete=models.PROTECT)
     title = models.CharField('title', max_length=200, help_text='The title of the page.')
 
     content = models.TextField() #RichTextField(config_name='default')   
